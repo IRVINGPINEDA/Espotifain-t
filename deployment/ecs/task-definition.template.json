@@ -1,0 +1,92 @@
+{
+  "family": "spotifynt",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "executionRoleArn": "arn:aws:iam::<ACCOUNT_ID>:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::<ACCOUNT_ID>:role/spotifyntTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "backend",
+      "image": "<ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/spotifynt-backend:<TAG>",
+      "essential": true,
+      "portMappings": [{ "containerPort": 5000, "protocol": "tcp" }],
+      "environment": [
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "PORT", "value": "5000" },
+        { "name": "DB_HOST", "value": "<RDS_ENDPOINT>" },
+        { "name": "DB_PORT", "value": "3306" },
+        { "name": "DB_USER", "value": "<DB_USER>" },
+        { "name": "DB_PASSWORD", "value": "<DB_PASSWORD>" },
+        { "name": "DB_NAME", "value": "<DB_NAME>" },
+        { "name": "JWT_SECRET", "value": "<JWT_SECRET>" },
+        { "name": "API_URL", "value": "https://<DOMAIN>" },
+        { "name": "FRONTEND_URL", "value": "https://<DOMAIN>" },
+        { "name": "CORS_ORIGIN", "value": "https://<DOMAIN>" },
+        { "name": "UPLOAD_ROOT", "value": "/uploads" }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "uploads",
+          "containerPath": "/uploads",
+          "readOnly": false
+        }
+      ],
+      "healthCheck": {
+        "command": ["CMD-SHELL", "wget -qO- http://127.0.0.1:5000/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 20
+      }
+    },
+    {
+      "name": "frontend",
+      "image": "<ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/spotifynt-frontend:<TAG>",
+      "essential": true,
+      "portMappings": [{ "containerPort": 80, "protocol": "tcp" }],
+      "healthCheck": {
+        "command": ["CMD-SHELL", "wget -qO- http://127.0.0.1/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 15
+      }
+    },
+    {
+      "name": "nginx",
+      "image": "<ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/spotifynt-nginx:<TAG>",
+      "essential": true,
+      "portMappings": [{ "containerPort": 80, "protocol": "tcp" }],
+      "dependsOn": [
+        { "containerName": "backend", "condition": "HEALTHY" },
+        { "containerName": "frontend", "condition": "HEALTHY" }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "uploads",
+          "containerPath": "/uploads",
+          "readOnly": true
+        }
+      ],
+      "healthCheck": {
+        "command": ["CMD-SHELL", "wget -qO- http://127.0.0.1/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 15
+      }
+    }
+  ],
+  "volumes": [
+    {
+      "name": "uploads",
+      "efsVolumeConfiguration": {
+        "fileSystemId": "<EFS_ID>",
+        "transitEncryption": "ENABLED",
+        "rootDirectory": "/spotifynt/uploads"
+      }
+    }
+  ]
+}

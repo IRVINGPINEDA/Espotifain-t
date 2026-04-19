@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Archivo:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --surface-strong: #0a0d0f;
+  --surface: #101619;
+  --surface-soft: #182225;
+  --surface-muted: #202d31;
+  --card: rgba(14, 22, 24, 0.88);
+  --line: rgba(255, 255, 255, 0.08);
+  --copy: #eff2e9;
+  --copy-soft: #a4b7b8;
+  --accent: #f2a65a;
+  --accent-strong: #ffcf8b;
+  --highlight: #33c48d;
+  --warning: #f36f45;
+  --shadow: 0 26px 80px rgba(0, 0, 0, 0.34);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background:
+    radial-gradient(circle at top left, rgba(242, 166, 90, 0.16), transparent 36%),
+    radial-gradient(circle at top right, rgba(51, 196, 141, 0.16), transparent 32%),
+    linear-gradient(180deg, #07090b 0%, #0f1719 48%, #070a0b 100%);
+  color: var(--copy);
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Archivo', sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  color: var(--copy);
+  background: transparent;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.glass-panel {
+  background: linear-gradient(180deg, rgba(24, 34, 37, 0.82), rgba(10, 13, 15, 0.94));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.panel-edge {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.field {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--copy);
+  padding: 0.85rem 1rem;
+  outline: none;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.field:focus {
+  border-color: rgba(242, 166, 90, 0.65);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  padding: 0.78rem 1.15rem;
+  font-weight: 600;
+  transition: transform 160ms ease, opacity 160ms ease, background 160ms ease;
+  cursor: pointer;
+}
+
+.action-button:hover {
+  transform: translateY(-1px);
+}
+
+.action-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #17110c;
+}
+
+.action-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.09);
+  color: var(--copy);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.45rem 0.85rem;
+  color: var(--copy-soft);
+  font-size: 0.875rem;
+}
+
+input[type='range'] {
+  accent-color: var(--accent);
+}
